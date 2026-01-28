@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "setup": "npm install && npm install tailwindcss-animate && echo Setup complete! Run 'npm run dev' to start.",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  }
+}
