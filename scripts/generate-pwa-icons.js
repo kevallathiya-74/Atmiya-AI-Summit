@@ -1,14 +1,14 @@
 /**
  * PWA Icon Generator Script
- * 
+ *
  * This script converts SVG icons to PNG format for production PWA deployment.
- * 
+ *
  * Prerequisites:
  *   npm install sharp
- * 
+ *
  * Usage:
  *   node scripts/generate-pwa-icons.js
- * 
+ *
  * What it does:
  * - Reads SVG icons from /public/icons/
  * - Converts to PNG with exact dimensions (192x192, 512x512)
@@ -16,19 +16,19 @@
  * - Maintains transparent background
  */
 
-const sharp = require('sharp');
-const fs = require('fs');
-const path = require('path');
+const sharp = require("sharp");
+const fs = require("fs");
+const path = require("path");
 
-const ICONS_DIR = path.join(__dirname, '..', 'public', 'icons');
+const ICONS_DIR = path.join(__dirname, "..", "public", "icons");
 
 const icons = [
-  { input: 'icon-192x192.svg', output: 'icon-192x192.png', size: 192 },
-  { input: 'icon-512x512.svg', output: 'icon-512x512.png', size: 512 },
+  { input: "icon-192x192.svg", output: "icon-192x192.png", size: 192 },
+  { input: "icon-512x512.svg", output: "icon-512x512.png", size: 512 },
 ];
 
 async function generateIcons() {
-  console.log('🎨 PWA Icon Generator\n');
+  console.log("🎨 PWA Icon Generator\n");
 
   for (const icon of icons) {
     const inputPath = path.join(ICONS_DIR, icon.input);
@@ -42,7 +42,7 @@ async function generateIcons() {
     try {
       await sharp(inputPath)
         .resize(icon.size, icon.size, {
-          fit: 'contain',
+          fit: "contain",
           background: { r: 0, g: 0, b: 0, alpha: 0 }, // Transparent background
         })
         .png({
@@ -57,16 +57,15 @@ async function generateIcons() {
     }
   }
 
-  console.log('\n🎉 Icon generation complete!');
-  console.log('\nNext steps:');
-  console.log('1. Verify PNG icons in /public/icons/');
-  console.log('2. Commit PNG icons to git');
-  console.log('3. Deploy to Vercel');
-  console.log('4. Test PWA install on production');
+  console.log("\n🎉 Icon generation complete!");
+  console.log("\nNext steps:");
+  console.log("1. Verify PNG icons in /public/icons/");
+  console.log("2. Commit PNG icons to git");
+  console.log("3. Deploy to Vercel");
+  console.log("4. Test PWA install on production");
 }
 
 generateIcons().catch((error) => {
-  console.error('❌ Icon generation failed:', error);
+  console.error("❌ Icon generation failed:", error);
   process.exit(1);
 });
-
