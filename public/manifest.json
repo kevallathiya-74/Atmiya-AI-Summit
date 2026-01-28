@@ -1,0 +1,29 @@
+{
+  "name": "GayanSetu AI - ગ્યાનસેતુ AI",
+  "short_name": "GayanSetu",
+  "description": "Gujarati language education platform powered by AI for GSEB and NCERT students and teachers",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "gu",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false
+}

@@ -2,403 +2,512 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useDashboardStore } from "@/store/dashboard-store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import {
   Target,
   CheckCircle2,
   XCircle,
-  ChevronRight,
-  Sparkles,
+  Plus,
+  History,
+  Trash2,
   RotateCcw,
+  Book,
+  Trophy,
+  Calendar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Demo questions
-const demoQuestions = [
+interface PracticeSession {
+  id: string;
+  subject: string;
+  subjectGu: string;
+  totalQuestions: number;
+  correctAnswers: number;
+  date: string;
+  duration: string;
+}
+
+// Demo practice history
+const demoHistory: PracticeSession[] = [
   {
     id: "1",
-    question: "ગુજરાતની રાજધાની શું છે?",
-    options: ["અમદાવાદ", "ગાંધીનગર", "સુરત", "રાજકોટ"],
-    answer: "ગાંધીનગર",
+    subject: "Mathematics",
+    subjectGu: "ગણિત",
+    totalQuestions: 10,
+    correctAnswers: 8,
+    date: "આજે",
+    duration: "15 મિનિટ",
   },
   {
     id: "2",
-    question: "2 + 2 = ?",
-    options: ["3", "4", "5", "6"],
-    answer: "4",
+    subject: "Science",
+    subjectGu: "વિજ્ઞાન",
+    totalQuestions: 15,
+    correctAnswers: 12,
+    date: "ગઈકાલે",
+    duration: "20 મિનિટ",
   },
   {
     id: "3",
-    question: "પાણીનું રાસાયણિક સૂત્ર શું છે?",
-    options: ["H₂O", "CO₂", "O₂", "H₂"],
-    answer: "H₂O",
-  },
-  {
-    id: "4",
-    question: "ભારતના પ્રથમ વડાપ્રધાન કોણ હતા?",
-    options: [
-      "મહાત્મા ગાંધી",
-      "જવાહરલાલ નેહરુ",
-      "સરદાર પટેલ",
-      "બી.આર. આંબેડકર",
-    ],
-    answer: "જવાહરલાલ નેહરુ",
+    subject: "English",
+    subjectGu: "અંગ્રેજી",
+    totalQuestions: 8,
+    correctAnswers: 6,
+    date: "2 દિવસ પહેલા",
+    duration: "10 મિનિટ",
   },
 ];
 
 export default function PracticePage() {
-  const {
-    questions,
-    currentQuestionIndex,
-    addQuestion,
-    answerQuestion,
-    nextQuestion,
-    resetPractice,
-  } = useDashboardStore();
-  const [practiceStarted, setPracticeStarted] = useState(false);
-  const [currentQuestions, setCurrentQuestions] = useState(demoQuestions);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [showResult, setShowResult] = useState(false);
-  const [score, setScore] = useState(0);
-  const [completed, setCompleted] = useState(false);
+  const [sessions, setSessions] = useState<PracticeSession[]>(demoHistory);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showHistoryDialog, setShowHistoryDialog] = useState(false);
+  const [showClearDialog, setShowClearDialog] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
 
-  const handleStartPractice = () => {
-    setPracticeStarted(true);
-    setCurrentIndex(0);
-    setSelectedAnswer(null);
-    setShowResult(false);
-    setScore(0);
-    setCompleted(false);
-  };
+  // Form state
+  const [newSession, setNewSession] = useState({
+    subject: "",
+    totalQuestions: "10",
+  });
 
-  const handleAnswerSelect = (answer: string) => {
-    if (showResult) return;
-    setSelectedAnswer(answer);
-  };
+  const subjectOptions = [
+    { value: "math", label: "Mathematics", labelGu: "ગણિત" },
+    { value: "science", label: "Science", labelGu: "વિજ્ઞાન" },
+    { value: "english", label: "English", labelGu: "અંગ્રેજી" },
+    { value: "gujarati", label: "Gujarati", labelGu: "ગુજરાતી" },
+    { value: "social", label: "Social Science", labelGu: "સામાજિક વિજ્ઞાન" },
+  ];
 
-  const handleSubmitAnswer = () => {
-    if (!selectedAnswer) return;
-
-    const currentQuestion = currentQuestions[currentIndex];
-    const isCorrect = selectedAnswer === currentQuestion.answer;
-
-    if (isCorrect) {
-      setScore(score + 1);
+  const handleCreateSession = async () => {
+    if (!newSession.subject || !newSession.totalQuestions) {
+      alert("કૃપા કરીને બધી વિગતો ભરો");
+      return;
     }
 
-    setShowResult(true);
-  };
+    setIsCreating(true);
 
-  const handleNextQuestion = () => {
-    if (currentIndex < currentQuestions.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setSelectedAnswer(null);
-      setShowResult(false);
-    } else {
-      setCompleted(true);
-    }
-  };
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
-  const handleRestart = () => {
-    setPracticeStarted(false);
-    setCurrentIndex(0);
-    setSelectedAnswer(null);
-    setShowResult(false);
-    setScore(0);
-    setCompleted(false);
-  };
-
-  if (!practiceStarted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50/30 flex items-center justify-center p-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-2xl w-full"
-        >
-          <Card className="border-0 shadow-2xl">
-            <CardHeader className="text-center pb-4">
-              <div className="flex justify-center mb-4">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-lg">
-                  <Target className="w-10 h-10 text-white" />
-                </div>
-              </div>
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                અભ્યાસ શરૂ કરો
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="text-center space-y-2">
-                <p className="text-lg text-gray-700 font-gujarati">
-                  તમારા જ્ઞાનની કસોટી કરો
-                </p>
-                <p className="text-gray-600 font-gujarati">
-                  {currentQuestions.length} પ્રશ્નો • બહુવિકલ્પી પ્રશ્નો
-                </p>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 py-4">
-                <div className="text-center p-4 bg-blue-50 rounded-xl">
-                  <p className="text-3xl font-bold text-blue-600">
-                    {currentQuestions.length}
-                  </p>
-                  <p className="text-sm text-gray-600 font-gujarati">પ્રશ્નો</p>
-                </div>
-                <div className="text-center p-4 bg-green-50 rounded-xl">
-                  <p className="text-3xl font-bold text-green-600">
-                    {currentQuestions.length * 5}
-                  </p>
-                  <p className="text-sm text-gray-600 font-gujarati">મિનિટ</p>
-                </div>
-                <div className="text-center p-4 bg-purple-50 rounded-xl">
-                  <p className="text-3xl font-bold text-purple-600">100</p>
-                  <p className="text-sm text-gray-600 font-gujarati">ગુણ</p>
-                </div>
-              </div>
-
-              <Button
-                onClick={handleStartPractice}
-                size="lg"
-                className="w-full h-14 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-gujarati"
-              >
-                <Target className="w-5 h-5 mr-2" />
-                શરૂ કરો
-              </Button>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
+    const selectedSubject = subjectOptions.find(
+      (s) => s.value === newSession.subject
     );
-  }
 
-  if (completed) {
-    const percentage = Math.round((score / currentQuestions.length) * 100);
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50/30 flex items-center justify-center p-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-2xl w-full"
-        >
-          <Card className="border-0 shadow-2xl">
-            <CardContent className="pt-12 pb-8 text-center space-y-6">
-              <div className="flex justify-center">
-                <div
-                  className={cn(
-                    "w-32 h-32 rounded-full flex items-center justify-center shadow-lg",
-                    percentage >= 70
-                      ? "bg-gradient-to-br from-green-500 to-emerald-600"
-                      : "bg-gradient-to-br from-orange-500 to-red-600"
-                  )}
-                >
-                  <div className="text-white">
-                    <p className="text-5xl font-bold">{percentage}%</p>
-                  </div>
-                </div>
-              </div>
+    const session: PracticeSession = {
+      id: Date.now().toString(),
+      subject: selectedSubject?.label || "",
+      subjectGu: selectedSubject?.labelGu || "",
+      totalQuestions: parseInt(newSession.totalQuestions),
+      correctAnswers: Math.floor(
+        Math.random() * parseInt(newSession.totalQuestions)
+      ),
+      date: "હમણાં જ",
+      duration: "પૂર્ણ થયું",
+    };
 
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold text-gray-900 font-gujarati">
-                  {percentage >= 70 ? "શાબાશ! 🎉" : "સારો પ્રયાસ! 💪"}
-                </h2>
-                <p className="text-lg text-gray-600 font-gujarati">
-                  તમે {currentQuestions.length} માંથી {score} પ્રશ્નો સાચા કર્યા
-                </p>
-              </div>
+    setSessions([session, ...sessions]);
+    setShowCreateDialog(false);
+    setIsCreating(false);
+    setNewSession({ subject: "", totalQuestions: "10" });
+  };
 
-              <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                <div className="p-6 bg-green-50 rounded-xl">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <CheckCircle2 className="w-6 h-6 text-green-600" />
-                    <p className="text-3xl font-bold text-green-600">{score}</p>
-                  </div>
-                  <p className="text-sm text-gray-600 font-gujarati">
-                    સાચા જવાબ
-                  </p>
-                </div>
-                <div className="p-6 bg-red-50 rounded-xl">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <XCircle className="w-6 h-6 text-red-600" />
-                    <p className="text-3xl font-bold text-red-600">
-                      {currentQuestions.length - score}
-                    </p>
-                  </div>
-                  <p className="text-sm text-gray-600 font-gujarati">
-                    ખોટા જવાબ
-                  </p>
-                </div>
-              </div>
+  const handleClearHistory = async () => {
+    setIsClearing(true);
 
-              <div className="flex gap-4 pt-4">
-                <Button
-                  onClick={handleRestart}
-                  variant="outline"
-                  size="lg"
-                  className="flex-1 h-12 font-gujarati"
-                >
-                  <RotateCcw className="w-5 h-5 mr-2" />
-                  ફરીથી પ્રયાસ કરો
-                </Button>
-                <Button
-                  onClick={() => setPracticeStarted(false)}
-                  size="lg"
-                  className="flex-1 h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-gujarati"
-                >
-                  પૂર્ણ કર્યું
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-    );
-  }
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  const currentQuestion = currentQuestions[currentIndex];
+    setSessions([]);
+    setShowClearDialog(false);
+    setIsClearing(false);
+  };
+
+  const getScorePercentage = (correct: number, total: number) => {
+    return Math.round((correct / total) * 100);
+  };
+
+  const getScoreColor = (percentage: number) => {
+    if (percentage >= 80) return "text-green-600 bg-green-50 border-green-200";
+    if (percentage >= 60) return "text-blue-600 bg-blue-50 border-blue-200";
+    if (percentage >= 40)
+      return "text-yellow-600 bg-yellow-50 border-yellow-200";
+    return "text-red-600 bg-red-50 border-red-200";
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50/30">
-      {/* Header */}
-      <div className="border-b border-gray-200 bg-white/80 backdrop-blur-sm">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-2.5 rounded-xl shadow-md">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 font-gujarati">
-                  અભ્યાસ
-                </h1>
-                <p className="text-sm text-gray-600 font-gujarati">
-                  પ્રશ્ન {currentIndex + 1} / {currentQuestions.length}
-                </p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-600 font-gujarati">ગુણ</p>
-              <p className="text-2xl font-bold text-purple-600">{score}</p>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4 md:p-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-6xl mx-auto space-y-6"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+              પ્રેક્ટિસ ઝોન
+            </h1>
+            <p className="text-sm md:text-base text-gray-600 mt-2">
+              Practice Zone - Test your knowledge
+            </p>
           </div>
-
-          {/* Progress Bar */}
-          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{
-                width: `${
-                  ((currentIndex + 1) / currentQuestions.length) * 100
-                }%`,
-              }}
-              className="h-full bg-gradient-to-r from-purple-600 to-pink-600"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Question Content */}
-      <div className="px-6 py-8">
-        <div className="max-w-3xl mx-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentIndex}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
+          <div className="flex gap-3">
+            <Button
+              onClick={() => setShowHistoryDialog(true)}
+              variant="outline"
+              size="lg"
             >
-              <Card className="border-0 shadow-xl">
-                <CardContent className="pt-8 pb-8 space-y-8">
-                  {/* Question */}
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900 font-gujarati leading-relaxed">
-                      {currentQuestion.question}
-                    </h2>
-                  </div>
-
-                  {/* Options */}
-                  <div className="space-y-3">
-                    {currentQuestion.options?.map((option, index) => {
-                      const isSelected = selectedAnswer === option;
-                      const isCorrect = option === currentQuestion.answer;
-                      const showCorrect = showResult && isCorrect;
-                      const showIncorrect =
-                        showResult && isSelected && !isCorrect;
-
-                      return (
-                        <button
-                          key={index}
-                          onClick={() => handleAnswerSelect(option)}
-                          disabled={showResult}
-                          className={cn(
-                            "w-full p-5 rounded-xl border-2 text-left transition-all duration-200 font-gujarati text-lg",
-                            !showResult &&
-                              !isSelected &&
-                              "border-gray-200 hover:border-purple-300 hover:bg-purple-50",
-                            !showResult &&
-                              isSelected &&
-                              "border-purple-500 bg-purple-50",
-                            showCorrect && "border-green-500 bg-green-50",
-                            showIncorrect && "border-red-500 bg-red-50",
-                            showResult && "cursor-not-allowed"
-                          )}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span
-                              className={cn(
-                                showCorrect && "text-green-700 font-semibold",
-                                showIncorrect && "text-red-700"
-                              )}
-                            >
-                              {option}
-                            </span>
-                            {showCorrect && (
-                              <CheckCircle2 className="w-6 h-6 text-green-600" />
-                            )}
-                            {showIncorrect && (
-                              <XCircle className="w-6 h-6 text-red-600" />
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Submit/Next Button */}
-                  <div className="flex gap-3 pt-4">
-                    {!showResult ? (
-                      <Button
-                        onClick={handleSubmitAnswer}
-                        disabled={!selectedAnswer}
-                        size="lg"
-                        className="w-full h-12 text-base bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-gujarati disabled:opacity-50"
-                      >
-                        <CheckCircle2 className="w-5 h-5 mr-2" />
-                        ચકાસો
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={handleNextQuestion}
-                        size="lg"
-                        className="w-full h-12 text-base bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-gujarati"
-                      >
-                        {currentIndex < currentQuestions.length - 1
-                          ? "આગળ વધો"
-                          : "પૂર્ણ કરો"}
-                        <ChevronRight className="w-5 h-5 ml-2" />
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </AnimatePresence>
+              <History className="w-5 h-5 mr-2" />
+              ઇતિહાસ
+            </Button>
+            <Button
+              onClick={() => setShowCreateDialog(true)}
+              size="lg"
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              નવું શરૂ કરો
+            </Button>
+          </div>
         </div>
-      </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-blue-600 rounded-xl">
+                  <Book className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">કુલ પ્રેક્ટિસ</p>
+                  <p className="text-3xl font-bold text-gray-900">
+                    {sessions.length}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-green-600 rounded-xl">
+                  <Trophy className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">સરેરાશ સ્કોર</p>
+                  <p className="text-3xl font-bold text-gray-900">
+                    {sessions.length > 0
+                      ? Math.round(
+                          sessions.reduce(
+                            (acc, s) =>
+                              acc +
+                              getScorePercentage(
+                                s.correctAnswers,
+                                s.totalQuestions
+                              ),
+                            0
+                          ) / sessions.length
+                        )
+                      : 0}
+                    %
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-purple-600 rounded-xl">
+                  <Target className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">કુલ પ્રશ્નો</p>
+                  <p className="text-3xl font-bold text-gray-900">
+                    {sessions.reduce((acc, s) => acc + s.totalQuestions, 0)}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Recent Practice */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-blue-600" />
+              તાજેતરની પ્રેક્ટિસ
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {sessions.length === 0 ? (
+              <div className="text-center py-12">
+                <Target className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-600 text-lg mb-2">
+                  હજુ સુધી કોઈ પ્રેક્ટિસ નથી
+                </p>
+                <p className="text-sm text-gray-500 mb-4">
+                  ઉપર "નવું શરૂ કરો" બટન દબાવો અને પ્રેક્ટિસ શરૂ કરો
+                </p>
+                <Button
+                  onClick={() => setShowCreateDialog(true)}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  પ્રેક્ટિસ શરૂ કરો
+                </Button>
+              </div>
+            ) : (
+              <ScrollArea className="h-[400px]">
+                <div className="space-y-3">
+                  {sessions.map((session, idx) => {
+                    const percentage = getScorePercentage(
+                      session.correctAnswers,
+                      session.totalQuestions
+                    );
+                    return (
+                      <motion.div
+                        key={session.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className={cn(
+                          "flex items-center gap-4 p-4 rounded-lg border-2",
+                          getScoreColor(percentage)
+                        )}
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-bold text-lg">
+                              {session.subjectGu}
+                            </span>
+                            <span className="text-sm text-gray-600">
+                              ({session.subject})
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm">
+                            <span>
+                              {session.correctAnswers}/{session.totalQuestions}{" "}
+                              બરાબર
+                            </span>
+                            <span className="text-gray-500">•</span>
+                            <span>{session.duration}</span>
+                            <span className="text-gray-500">•</span>
+                            <span>{session.date}</span>
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-3xl font-bold">
+                            {percentage}%
+                          </div>
+                          <div className="text-xs text-gray-600">સ્કોર</div>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-shrink-0"
+                        >
+                          <RotateCcw className="w-4 h-4 mr-1" />
+                          ફરી પ્રયાસ
+                        </Button>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Create Practice Dialog */}
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">
+              નવી પ્રેક્ટિસ શરૂ કરો
+            </DialogTitle>
+            <DialogDescription>
+              તમે કયા વિષયની પ્રેક્ટિસ કરવા માંગો છો?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="subject">વિષય પસંદ કરો *</Label>
+              <Select
+                value={newSession.subject}
+                onValueChange={(value) =>
+                  setNewSession({ ...newSession, subject: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="વિષય પસંદ કરો" />
+                </SelectTrigger>
+                <SelectContent>
+                  {subjectOptions.map((subject) => (
+                    <SelectItem key={subject.value} value={subject.value}>
+                      {subject.labelGu} ({subject.label})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="questions">કેટલા પ્રશ્નો? *</Label>
+              <Select
+                value={newSession.totalQuestions}
+                onValueChange={(value) =>
+                  setNewSession({ ...newSession, totalQuestions: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="પ્રશ્નો પસંદ કરો" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5 પ્રશ્નો</SelectItem>
+                  <SelectItem value="10">10 પ્રશ્નો</SelectItem>
+                  <SelectItem value="15">15 પ્રશ્નો</SelectItem>
+                  <SelectItem value="20">20 પ્રશ્નો</SelectItem>
+                  <SelectItem value="25">25 પ્રશ્નો</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setShowCreateDialog(false)}
+              disabled={isCreating}
+            >
+              રદ કરો
+            </Button>
+            <Button
+              onClick={handleCreateSession}
+              disabled={isCreating}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
+              {isCreating ? "શરૂ થઈ રહ્યું છે..." : "પ્રેક્ટિસ શરૂ કરો"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* History Dialog */}
+      <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl flex items-center gap-2">
+              <History className="w-6 h-6" />
+              પ્રેક્ટિસ ઇતિહાસ
+            </DialogTitle>
+            <DialogDescription>
+              તમારી બધી પ્રેક્ટિસની વિગતો અહીં છે
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[400px] pr-4">
+            {sessions.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600">હજુ સુધી કોઈ પ્રેક્ટિસ નથી</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {sessions.map((session) => {
+                  const percentage = getScorePercentage(
+                    session.correctAnswers,
+                    session.totalQuestions
+                  );
+                  return (
+                    <div
+                      key={session.id}
+                      className={cn(
+                        "p-4 rounded-lg border-2",
+                        getScoreColor(percentage)
+                      )}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-bold text-lg">
+                          {session.subjectGu}
+                        </span>
+                        <span className="text-2xl font-bold">
+                          {percentage}%
+                        </span>
+                      </div>
+                      <div className="text-sm space-y-1">
+                        <div>
+                          {session.correctAnswers}/{session.totalQuestions}{" "}
+                          બરાબર જવાબ
+                        </div>
+                        <div className="text-gray-600">
+                          {session.duration} • {session.date}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </ScrollArea>
+          <div className="flex justify-between items-center pt-4 border-t">
+            {sessions.length > 0 && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  setShowHistoryDialog(false);
+                  setShowClearDialog(true);
+                }}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                બધી પ્રેક્ટિસ કાઢી નાખો
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              onClick={() => setShowHistoryDialog(false)}
+              className="ml-auto"
+            >
+              બંધ કરો
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Clear History Confirmation */}
+      <ConfirmDialog
+        open={showClearDialog}
+        onOpenChange={setShowClearDialog}
+        onConfirm={handleClearHistory}
+        title="બધી પ્રેક્ટિસ કાઢી નાખો?"
+        description="શું તમે ખરેખર તમારી બધી પ્રેક્ટિસ કાઢી નાખવા માંગો છો? આ ક્રિયા પાછી ન લાવી શકાય."
+        confirmText={isClearing ? "કાઢી રહ્યા છીએ..." : "હા, કાઢી નાખો"}
+        cancelText="ના, રહેવા દો"
+        variant="danger"
+      />
     </div>
   );
 }

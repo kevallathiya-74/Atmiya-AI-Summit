@@ -1,0 +1,17 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#grad2)"/>
+  <g transform="translate(126, 156)">
+    <path d="M130 30 L30 80 L130 130 L230 80 Z" fill="white" opacity="0.95"/>
+    <path d="M60 100 L60 140 L130 180 L200 140 L200 100" fill="white" opacity="0.85"/>
+    <circle cx="230" cy="70" r="12" fill="#fbbf24"/>
+    <line x1="230" y1="82" x2="230" y2="105" stroke="#fbbf24" stroke-width="5"/>
+  </g>
+  <text x="256" y="380" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white" text-anchor="middle" opacity="0.9">ગ્યાનસેતુ</text>
+  <text x="256" y="440" font-family="Arial, sans-serif" font-size="48" font-weight="normal" fill="white" text-anchor="middle" opacity="0.75">AI</text>
+</svg>

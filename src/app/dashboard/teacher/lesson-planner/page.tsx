@@ -9,33 +9,59 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import {
   FileText,
   Sparkles,
   Download,
   Save,
   Trash2,
   Clock,
+  Edit,
+  Plus,
+  BookOpen,
 } from "lucide-react";
 import type { ClassLevel } from "@/types";
 
 export default function LessonPlannerPage() {
   const { lessonPlans, addLessonPlan, removeLessonPlan } = useDashboardStore();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const [formData, setFormData] = useState({
     title: "",
-    classLevel: 10 as ClassLevel,
+    classLevel: "10",
     subject: "",
     topic: "",
-    duration: 45,
+    duration: "45",
   });
 
   const handleGenerate = async () => {
     setIsGenerating(true);
 
-    // Simulate AI generation
     setTimeout(() => {
       addLessonPlan({
-        ...formData,
+        title: formData.title,
+        classLevel: parseInt(formData.classLevel) as ClassLevel,
+        subject: formData.subject,
+        topic: formData.topic,
+        duration: parseInt(formData.duration),
         objectives: [
           "વિદ્યાર્થીઓ મૂળભૂત ખ્યાલો સમજશે",
           "વ્યવહારિક ઉપયોગ શીખશે",
@@ -55,14 +81,49 @@ export default function LessonPlannerPage() {
       });
 
       setIsGenerating(false);
+      setShowCreateModal(false);
       setFormData({
         title: "",
-        classLevel: 10,
+        classLevel: "10",
         subject: "",
         topic: "",
-        duration: 45,
+        duration: "45",
       });
     }, 2000);
+  };
+
+  const handleEdit = (plan: any) => {
+    setSelectedPlan(plan);
+    setFormData({
+      title: plan.title,
+      classLevel: plan.classLevel.toString(),
+      subject: plan.subject,
+      topic: plan.topic,
+      duration: plan.duration.toString(),
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdate = () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      setIsGenerating(false);
+      setShowEditModal(false);
+      setSelectedPlan(null);
+    }, 800);
+  };
+
+  const handleDelete = () => {
+    if (selectedPlan) {
+      removeLessonPlan(selectedPlan.id);
+      setShowDeleteModal(false);
+      setSelectedPlan(null);
+    }
+  };
+
+  const openDeleteModal = (plan: any) => {
+    setSelectedPlan(plan);
+    setShowDeleteModal(true);
   };
 
   return (
@@ -75,10 +136,13 @@ export default function LessonPlannerPage() {
             AI-સંચાલિત પાઠ યોજના જનરેટર
           </p>
         </div>
-        <div className="bg-gradient-to-r from-blue-100 to-purple-100 px-4 py-2 rounded-full flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-blue-600" />
-          <span className="text-sm font-medium text-gray-900">AI Powered</span>
-        </div>
+        <Button
+          onClick={() => setShowCreateModal(true)}
+          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white gap-2"
+        >
+          <Plus className="w-4 h-4" />
+          નવી યોજના બનાવો
+        </Button>
       </div>
 
       {/* Generator Form */}
@@ -109,7 +173,7 @@ export default function LessonPlannerPage() {
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  classLevel: parseInt(e.target.value) as ClassLevel,
+                  classLevel: e.target.value,
                 })
               }
               className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -142,7 +206,7 @@ export default function LessonPlannerPage() {
               type="number"
               value={formData.duration}
               onChange={(e) =>
-                setFormData({ ...formData, duration: parseInt(e.target.value) })
+                setFormData({ ...formData, duration: e.target.value })
               }
               className="mt-1"
             />
@@ -230,14 +294,24 @@ export default function LessonPlannerPage() {
                         </span>
                       </div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeLessonPlan(plan.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEdit(plan)}
+                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openDeleteModal(plan)}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
 
                   <div className="space-y-3 text-sm">
@@ -263,23 +337,183 @@ export default function LessonPlannerPage() {
                       </ul>
                     </div>
                   </div>
-
-                  <div className="flex gap-2 mt-4 pt-4 border-t border-gray-200">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Download className="w-4 h-4 mr-2" />
-                      Export
-                    </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Save className="w-4 h-4 mr-2" />
-                      Edit
-                    </Button>
-                  </div>
                 </Card>
               </motion.div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Create Lesson Plan Modal */}
+      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>નવી પાઠ યોજના બનાવો</DialogTitle>
+            <DialogDescription>
+              AI તમારા માટે સંપૂર્ણ પાઠ યોજના બનાવશે
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="create-title">Lesson Title</Label>
+              <Input
+                id="create-title"
+                placeholder="e.g., Introduction to Algebra"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="create-class">Class</Label>
+                <Select
+                  value={formData.classLevel}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, classLevel: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="8">Class 8</SelectItem>
+                    <SelectItem value="9">Class 9</SelectItem>
+                    <SelectItem value="10">Class 10</SelectItem>
+                    <SelectItem value="11">Class 11</SelectItem>
+                    <SelectItem value="12">Class 12</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="create-duration">Duration (minutes)</Label>
+                <Input
+                  id="create-duration"
+                  type="number"
+                  value={formData.duration}
+                  onChange={(e) =>
+                    setFormData({ ...formData, duration: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="create-subject">Subject</Label>
+                <Input
+                  id="create-subject"
+                  placeholder="Mathematics"
+                  value={formData.subject}
+                  onChange={(e) =>
+                    setFormData({ ...formData, subject: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="create-topic">Topic</Label>
+                <Input
+                  id="create-topic"
+                  placeholder="Quadratic Equations"
+                  value={formData.topic}
+                  onChange={(e) =>
+                    setFormData({ ...formData, topic: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowCreateModal(false)}
+              disabled={isGenerating}
+            >
+              રદ કરો
+            </Button>
+            <Button
+              onClick={handleGenerate}
+              disabled={isGenerating || !formData.title || !formData.subject}
+              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white gap-2"
+            >
+              <Sparkles className="w-4 h-4" />
+              {isGenerating ? "બનાવી રહ્યા છીએ..." : "AI થી બનાવો"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Lesson Plan Modal */}
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>પાઠ યોજના સુધારો</DialogTitle>
+            <DialogDescription>તમારી પાઠ યોજનામાં ફેરફાર કરો</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="edit-title">Lesson Title</Label>
+              <Input
+                id="edit-title"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-subject">Subject</Label>
+                <Input
+                  id="edit-subject"
+                  value={formData.subject}
+                  onChange={(e) =>
+                    setFormData({ ...formData, subject: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-topic">Topic</Label>
+                <Input
+                  id="edit-topic"
+                  value={formData.topic}
+                  onChange={(e) =>
+                    setFormData({ ...formData, topic: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowEditModal(false)}
+              disabled={isGenerating}
+            >
+              રદ કરો
+            </Button>
+            <Button
+              onClick={handleUpdate}
+              disabled={isGenerating}
+              className="bg-gradient-to-r from-green-500 to-emerald-600 text-white"
+            >
+              {isGenerating ? "સાચવી રહ્યા છીએ..." : "સાચવો"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        title="પાઠ યોજના કાઢી નાખો?"
+        description="શું તમે ખરેખર આ પાઠ યોજના કાઢી નાખવા માંગો છો? આ ક્રિયા પાછી ફેરવી શકાશે નહીં."
+        onConfirm={handleDelete}
+        confirmText="કાઢી નાખો"
+        cancelText="રદ કરો"
+        variant="danger"
+      />
     </div>
   );
 }
