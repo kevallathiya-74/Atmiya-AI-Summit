@@ -1,0 +1,8 @@
+# robots.txt for GayanSetu AI
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+
+Sitemap: https://your-domain.vercel.app/sitemap.xml

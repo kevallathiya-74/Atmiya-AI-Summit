@@ -1,0 +1,40 @@
+# Files to ignore during Vercel deployment
+
+# Documentation
+
+README.md
+QUICKSTART.md
+PROJECT_SUMMARY.md
+SITEMAP.md
+\*.md
+
+# Development files
+
+.vscode/
+.idea/
+\*.log
+.env.local
+.env.development.local
+
+# Test files
+
+**/\*.test.ts
+**/_.test.tsx
+\*\*/_.spec.ts \*_/_.spec.tsx
+
+# Build artifacts (will be rebuilt)
+
+.next/
+out/
+build/
+dist/
+
+# Git
+
+.git/
+.gitignore
+
+# OS files
+
+.DS_Store
+Thumbs.db
