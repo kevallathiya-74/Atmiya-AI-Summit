@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   GraduationCap,
+  Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getGreeting } from "@/lib/utils";
@@ -29,6 +30,12 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
+  {
+    href: "/dashboard/student",
+    icon: <Home className="w-5 h-5" />,
+    label: "Home",
+    labelGu: "હોમ",
+  },
   {
     href: "/dashboard/student/ask-ai",
     icon: <MessageSquare className="w-5 h-5" />,

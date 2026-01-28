@@ -1,0 +1,15 @@
+export { ProgressRing } from "./progress-ring";
+export { XPBar } from "./xp-bar";
+export { StreakCounter } from "./streak-counter";
+export { BadgeDisplay, BadgeCard } from "./badge-display";
+export { ClassHeatmap } from "./class-heatmap";
+export { Celebration } from "./celebration";
+export { StudentContextBanner, WeakTopicAlert } from "./student-context";
+export { AITutorControls, VoiceInputButton } from "./ai-tutor-controls";
+export { CurriculumSelector } from "./curriculum-selector";
+export { LearningDNACard } from "./learning-dna-card";
+export { ConceptGapNavigator } from "./concept-gap-navigator";
+export { SmartRevisionEngine } from "./smart-revision-engine";
+export { ExamReadinessCard } from "./exam-readiness-card";
+export { StudyPlannerCard } from "./study-planner-card";
+export { SafeLearningBadge, ExplainableAICard } from "./safe-learning-components";
