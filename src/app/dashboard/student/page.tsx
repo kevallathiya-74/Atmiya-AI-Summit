@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useDashboardStore } from "@/store/dashboard-store";
@@ -12,168 +11,272 @@ import {
   StreakCounter,
   BadgeDisplay,
   StudentContextBanner,
-  AITutorControls,
-  CurriculumSelector,
-  LearningDNACard,
-  ConceptGapNavigator,
-  SmartRevisionEngine,
-  ExamReadinessCard,
-  StudyPlannerCard,
-  SafeLearningBadge,
-  ExplainableAICard,
 } from "@/components/shared";
 import {
   MessageSquare,
   BookOpen,
   Target,
-  TrendingUp,
-  Calendar,
-  Award,
-  Zap,
-  History,
-  Settings as SettingsIcon,
-  Wifi,
-  WifiOff,
-  Volume2,
-  Users,
-  Shield,
-  Brain,
-  BookMarked,
   Trophy,
+  Calendar,
+  Brain,
+  Users,
+  WifiOff,
+  Shield,
+  ArrowRight,
+  Zap,
+  Award,
+  Sparkles,
+  Volume2,
+  Download,
+  AlertCircle,
+  CheckCircle2,
   Timer,
+  Map,
+  RefreshCw,
+  HelpCircle,
+  TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const quickActions = [
+const featureCategories = [
   {
-    title: "AI ને પૂછો",
-    titleEn: "Ask AI",
-    description: "Gujarati AI Tutor with voice",
-    icon: MessageSquare,
-    href: "/dashboard/student/ask-ai",
-    color: "from-blue-500 to-purple-600",
-    xpReward: 10,
-  },
-  {
-    title: "શીખો",
-    titleEn: "Learn",
-    description: "Subject-wise learning paths",
+    id: "learning",
+    title: "મુખ્ય શીખવું",
+    titleEn: "Core Learning",
     icon: BookOpen,
-    href: "/dashboard/student/learn",
     color: "from-green-500 to-teal-600",
-    xpReward: 25,
+    features: [
+      {
+        title: "AI શિક્ષક",
+        titleEn: "AI Tutor",
+        icon: MessageSquare,
+        href: "/dashboard/student/ask-ai",
+        count: "Text & Voice",
+      },
+      {
+        title: "અભ્યાસક્રમ",
+        titleEn: "Curriculum",
+        icon: Map,
+        href: "/dashboard/student/curriculum",
+        count: "5-12",
+      },
+      {
+        title: "આગળનું વિષય",
+        titleEn: "Next Topic",
+        icon: Sparkles,
+        href: "/dashboard/student/next-topic",
+        count: "AI",
+      },
+    ],
   },
   {
-    title: "અભ્યાસ",
-    titleEn: "Practice",
-    description: "AI-generated practice questions",
-    icon: Target,
-    href: "/dashboard/student/practice",
-    color: "from-orange-500 to-red-600",
-    xpReward: 50,
+    id: "gamification",
+    title: "ગેમિફિકેશન",
+    titleEn: "Gamification",
+    icon: Trophy,
+    color: "from-yellow-500 to-orange-600",
+    features: [
+      {
+        title: "સ્ટ્રીક્સ",
+        titleEn: "Streaks",
+        icon: Zap,
+        href: "/dashboard/student/streaks",
+        count: "Daily",
+      },
+      {
+        title: "XP & સ્તરો",
+        titleEn: "XP & Levels",
+        icon: Award,
+        href: "/dashboard/student/xp-levels",
+        count: "Progress",
+      },
+      {
+        title: "માઇક્રો ચેલેન્જ",
+        titleEn: "Micro Challenges",
+        icon: Timer,
+        href: "/dashboard/student/micro-challenges",
+        count: "3 min",
+      },
+    ],
   },
   {
-    title: "નોંધો",
-    titleEn: "Notes",
-    description: "Your saved notes & history",
-    icon: History,
-    href: "/dashboard/student/notes",
+    id: "ai-personalization",
+    title: "AI વ્યક્તિગતકરણ",
+    titleEn: "AI Personalization",
+    icon: Brain,
     color: "from-purple-500 to-pink-600",
-    xpReward: 5,
+    features: [
+      {
+        title: "Learning DNA",
+        titleEn: "Learning DNA",
+        icon: Brain,
+        href: "/dashboard/student/learning-dna",
+        count: "Profile",
+      },
+      {
+        title: "કોન્સેપ્ટ ગેપ",
+        titleEn: "Concept Gaps",
+        icon: AlertCircle,
+        href: "/dashboard/student/concept-gaps",
+        count: "Hidden",
+      },
+      {
+        title: "સ્માર્ટ રિવિઝન",
+        titleEn: "Smart Revision",
+        icon: RefreshCw,
+        href: "/dashboard/student/smart-revision",
+        count: "AI",
+      },
+    ],
+  },
+  {
+    id: "practice",
+    title: "અભ્યાસ & પરીક્ષા",
+    titleEn: "Practice & Exam",
+    icon: Target,
+    color: "from-blue-500 to-indigo-600",
+    features: [
+      {
+        title: "પ્રશ્નો",
+        titleEn: "Practice",
+        icon: Target,
+        href: "/dashboard/student/practice",
+        count: "Chapter",
+      },
+      {
+        title: "પરીક્ષા તૈયારી",
+        titleEn: "Exam Readiness",
+        icon: CheckCircle2,
+        href: "/dashboard/student/exam-readiness",
+        count: "Score",
+      },
+      {
+        title: "તાત્કાલિક સમજૂતી",
+        titleEn: "Instant Explain",
+        icon: HelpCircle,
+        href: "/dashboard/student/instant-explain",
+        count: "AI",
+      },
+    ],
+  },
+  {
+    id: "planner",
+    title: "આયોજન",
+    titleEn: "Planning",
+    icon: Calendar,
+    color: "from-indigo-500 to-purple-600",
+    features: [
+      {
+        title: "અભ્યાસ યોજના",
+        titleEn: "Study Planner",
+        icon: Calendar,
+        href: "/dashboard/student/study-planner",
+        count: "Auto",
+      },
+      {
+        title: "સ્વ-સમજૂતી",
+        titleEn: "Self Explanation",
+        icon: MessageSquare,
+        href: "/dashboard/student/self-explanation",
+        count: "AI",
+      },
+    ],
+  },
+  {
+    id: "accessibility",
+    title: "ઍક્સેસિબિલિટી",
+    titleEn: "Accessibility",
+    icon: WifiOff,
+    color: "from-green-500 to-emerald-600",
+    features: [
+      {
+        title: "ઓફલાઇન",
+        titleEn: "Offline",
+        icon: Download,
+        href: "/dashboard/student/offline-capsules",
+        count: "Download",
+      },
+      {
+        title: "ઓડિયો",
+        titleEn: "Audio",
+        icon: Volume2,
+        href: "/dashboard/student/audio-lessons",
+        count: "Voice",
+      },
+      {
+        title: "લો બેન્ડવિડ્થ",
+        titleEn: "Low Bandwidth",
+        icon: WifiOff,
+        href: "/dashboard/student/low-bandwidth",
+        count: "Rural",
+      },
+    ],
+  },
+  {
+    id: "peer",
+    title: "સાથીદાર",
+    titleEn: "Peer Learning",
+    icon: Users,
+    color: "from-pink-500 to-rose-600",
+    features: [
+      {
+        title: "શંકા શેરિંગ",
+        titleEn: "Doubt Sharing",
+        icon: Users,
+        href: "/dashboard/student/doubt-sharing",
+        count: "Safe",
+      },
+    ],
+  },
+  {
+    id: "safety",
+    title: "સુરક્ષા",
+    titleEn: "Safety & Privacy",
+    icon: Shield,
+    color: "from-red-500 to-orange-600",
+    features: [
+      {
+        title: "સુરક્ષિત મોડ",
+        titleEn: "Safe Mode",
+        icon: Shield,
+        href: "/dashboard/student/safe-mode",
+        count: "Child-Safe",
+      },
+      {
+        title: "સમજાવી શકાય AI",
+        titleEn: "Explainable AI",
+        icon: HelpCircle,
+        href: "/dashboard/student/explainable-ai",
+        count: "Transparent",
+      },
+    ],
   },
 ];
 
 export default function StudentDashboardPage() {
   const router = useRouter();
-  const {
-    gamification,
-    studentContext,
-    coachMessages,
-    learningDNA,
-    revisionSchedule,
-    examReadiness,
-    settings,
-    updateSettings,
-  } = useDashboardStore();
-
-  const [selectedClass, setSelectedClass] = useState<number>(
-    studentContext.classLevel
-  );
+  const { gamification, studentContext, coachMessages } = useDashboardStore();
 
   const todaysCoachMessage = coachMessages[0] || {
-    message: "Great job! Keep learning consistently.",
-    messageGu: "સરસ! સતત શીખવાનું ચાલુ રાખો.",
+    message: "Start your learning journey today!",
+    messageGu: "આજે તમારી શીખવાની યાત્રા શરૂ કરો!",
     type: "motivation" as const,
   };
 
   return (
     <ScrollArea className="h-screen">
       <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
-        {/* Header: Settings & Safe Learning */}
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 font-gujarati">
-              નમસ્તે! 🙏
-            </h1>
-            <p className="text-gray-600 text-sm md:text-base">
-              Welcome to GYAANSETU.AI
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Low Bandwidth Mode Toggle */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                updateSettings({
-                  lowBandwidthMode: !settings.lowBandwidthMode,
-                })
-              }
-              className={cn(
-                settings.lowBandwidthMode && "bg-green-50 border-green-500"
-              )}
-            >
-              {settings.lowBandwidthMode ? (
-                <>
-                  <WifiOff className="w-4 h-4 mr-2" />
-                  <span className="hidden md:inline font-gujarati">
-                    લો બેન્ડવિડ્થ
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Wifi className="w-4 h-4 mr-2" />
-                  <span className="hidden md:inline">Normal</span>
-                </>
-              )}
-            </Button>
-
-            {/* Voice Toggle */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                updateSettings({ voiceEnabled: !settings.voiceEnabled })
-              }
-            >
-              <Volume2
-                className={cn(
-                  "w-4 h-4",
-                  !settings.voiceEnabled && "text-gray-400"
-                )}
-              />
-            </Button>
-          </div>
+        {/* Welcome Header */}
+        <div>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 font-gujarati mb-2">
+            નમસ્તે! 🙏
+          </h1>
+          <p className="text-gray-600 text-lg">
+            Welcome to GYAANSETU.AI - Your Gujarati AI Learning Platform
+          </p>
         </div>
 
-        {/* Safe Learning Badge */}
-        <SafeLearningBadge
-          isActive={true}
-          onToggle={(active) => console.log("Safe mode:", active)}
-        />
-
-        {/* XP, Streak & Level Section */}
+        {/* Gamification Stats */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           <Card className="lg:col-span-2 p-4 md:p-6">
             <XPBar
@@ -181,15 +284,11 @@ export default function StudentDashboardPage() {
               level={gamification.level}
               className="mb-6"
             />
-
             <div className="flex items-center gap-4 flex-wrap">
               <StreakCounter streak={gamification.streak} />
-
               <div className="flex-1 min-w-[200px] space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600 font-gujarati">
-                    આજે મેળવેલ XP
-                  </span>
+                  <span className="text-gray-600 font-gujarati">આજે XP</span>
                   <span className="font-semibold text-gray-900">
                     {gamification.dailyXP} XP
                   </span>
@@ -212,9 +311,9 @@ export default function StudentDashboardPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => router.push("/dashboard/student/settings")}
+                onClick={() => router.push("/dashboard/student/badges")}
               >
-                View All
+                All
               </Button>
             </div>
             <BadgeDisplay badges={gamification.badges} maxDisplay={4} />
@@ -227,38 +326,10 @@ export default function StudentDashboardPage() {
           </Card>
         </div>
 
-        {/* Student Context & Class Selection */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          <StudentContextBanner context={studentContext} showDifficulty />
+        {/* Student Context */}
+        <StudentContextBanner context={studentContext} showDifficulty />
 
-          <Card className="p-4 md:p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-3 rounded-xl">
-                <BookMarked className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 font-gujarati">
-                  તમારો ધોરણ
-                </h3>
-                <p className="text-sm text-gray-600">Select Your Class</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-4 gap-2">
-              {[5, 6, 7, 8, 9, 10, 11, 12].map((classNum) => (
-                <Button
-                  key={classNum}
-                  variant={selectedClass === classNum ? "default" : "outline"}
-                  className="font-gujarati"
-                  onClick={() => setSelectedClass(classNum)}
-                >
-                  {classNum}
-                </Button>
-              ))}
-            </div>
-          </Card>
-        </div>
-
-        {/* AI Coach Daily Message */}
+        {/* AI Coach Message */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -267,11 +338,11 @@ export default function StudentDashboardPage() {
           <Card className="p-4 md:p-6 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
             <div className="flex items-start gap-4">
               <div className="bg-purple-500 p-3 rounded-xl flex-shrink-0">
-                <Zap className="w-6 h-6 text-white" />
+                <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900 mb-1 font-gujarati">
-                  આજનો સંદેશો - AI લર્નિંગ કોચ
+                  આજનો AI સંદેશો
                 </h3>
                 <p className="text-gray-700 font-gujarati">
                   {todaysCoachMessage.messageGu}
@@ -284,50 +355,65 @@ export default function StudentDashboardPage() {
           </Card>
         </motion.div>
 
-        {/* Quick Actions Grid */}
+        {/* All Features Grid */}
         <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4 font-gujarati">
-            ઝડપી ક્રિયાઓ
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 font-gujarati">
+            બધી સુવિધાઓ
+            <span className="text-sm font-normal text-gray-600 ml-2">
+              (49 Features)
+            </span>
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {quickActions.map((action, index) => {
-              const Icon = action.icon;
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {featureCategories.map((category, idx) => {
+              const CategoryIcon = category.icon;
               return (
                 <motion.div
-                  key={action.href}
+                  key={category.id}
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.1 * index }}
+                  transition={{ delay: 0.1 * idx }}
                 >
-                  <Card
-                    className="p-4 md:p-6 cursor-pointer hover:shadow-lg transition-all group"
-                    onClick={() => router.push(action.href)}
-                  >
-                    <div
-                      className={cn(
-                        "w-12 h-12 rounded-xl bg-gradient-to-br mb-4",
-                        "flex items-center justify-center shadow-md",
-                        "group-hover:scale-110 transition-transform",
-                        action.color
-                      )}
-                    >
-                      <Icon className="w-6 h-6 text-white" />
+                  <Card className="p-4 hover:shadow-lg transition-all">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div
+                        className={cn(
+                          "w-10 h-10 rounded-lg bg-gradient-to-br flex items-center justify-center",
+                          category.color
+                        )}
+                      >
+                        <CategoryIcon className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 font-gujarati text-sm truncate">
+                          {category.title}
+                        </h3>
+                        <p className="text-xs text-gray-600">
+                          {category.titleEn}
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="font-semibold text-gray-900 mb-1 font-gujarati">
-                      {action.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {action.titleEn}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {action.description}
-                    </p>
-                    <div className="mt-3 flex items-center gap-2">
-                      <Zap className="w-3 h-3 text-yellow-500" />
-                      <span className="text-xs font-medium text-yellow-600">
-                        +{action.xpReward} XP
-                      </span>
-                    </div>
+                    <ul className="space-y-2">
+                      {category.features.map((feature) => {
+                        const FeatureIcon = feature.icon;
+                        return (
+                          <li key={feature.href}>
+                            <button
+                              onClick={() => router.push(feature.href)}
+                              className="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-100 transition-colors text-left group"
+                            >
+                              <FeatureIcon className="w-4 h-4 text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
+                              <span className="flex-1 text-sm text-gray-700 font-gujarati truncate">
+                                {feature.title}
+                              </span>
+                              <span className="text-xs text-gray-500 flex-shrink-0">
+                                {feature.count}
+                              </span>
+                              <ArrowRight className="w-3 h-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </Card>
                 </motion.div>
               );
@@ -335,140 +421,48 @@ export default function StudentDashboardPage() {
           </div>
         </div>
 
-        {/* AI Tutor Controls */}
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4 font-gujarati">
-            AI ટ્યુટર સેટિંગ્સ
-          </h2>
-          <AITutorControls />
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Card className="p-4 text-center">
+            <TrendingUp className="w-8 h-8 text-green-600 mx-auto mb-2" />
+            <p className="text-2xl font-bold text-gray-900">
+              {gamification.level}
+            </p>
+            <p className="text-sm text-gray-600 font-gujarati">સ્તર</p>
+          </Card>
+          <Card className="p-4 text-center">
+            <Zap className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
+            <p className="text-2xl font-bold text-gray-900">
+              {gamification.streak}
+            </p>
+            <p className="text-sm text-gray-600 font-gujarati">દિવસ સ્ટ્રીક</p>
+          </Card>
+          <Card className="p-4 text-center">
+            <Trophy className="w-8 h-8 text-orange-600 mx-auto mb-2" />
+            <p className="text-2xl font-bold text-gray-900">
+              {gamification.badges.filter((b) => b.earnedAt).length}
+            </p>
+            <p className="text-sm text-gray-600 font-gujarati">બેજ</p>
+          </Card>
+          <Card className="p-4 text-center">
+            <Target className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+            <p className="text-2xl font-bold text-gray-900">
+              {gamification.xp}
+            </p>
+            <p className="text-sm text-gray-600">Total XP</p>
+          </Card>
         </div>
-
-        {/* Personalization Section */}
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4 font-gujarati">
-            તમારું વ્યક્તિગત લર્નિંગ પ્રોફાઇલ
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            <LearningDNACard learningDNA={learningDNA} />
-            <ConceptGapNavigator
-              learningDNA={learningDNA}
-              onFillGap={(topicId) => console.log("Fill gap:", topicId)}
-            />
-            <SmartRevisionEngine
-              revisionSchedule={revisionSchedule}
-              onCompleteRevision={(id) => console.log("Complete:", id)}
-            />
-          </div>
-        </div>
-
-        {/* Exam & Planning Section */}
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4 font-gujarati">
-            પરીક્ષા તૈયારી અને આયોજન
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            <ExamReadinessCard
-              examReadiness={examReadiness}
-              onFocusArea={(area) => console.log("Focus on:", area)}
-            />
-            <StudyPlannerCard
-              examDate={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)}
-              onGeneratePlan={() => console.log("Generate new plan")}
-            />
-          </div>
-        </div>
-
-        {/* Curriculum Selection */}
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4 font-gujarati">
-            અભ્યાસક્રમ પસંદગી
-          </h2>
-          <CurriculumSelector />
-        </div>
-
-        {/* Accessibility & Rural Features */}
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4 font-gujarati">
-            ઍક્સેસિબિલિટી ફીચર્સ
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="p-4 md:p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <WifiOff className="w-6 h-6 text-green-600" />
-                <h3 className="font-semibold text-gray-900 font-gujarati">
-                  ઓફલાઇન મોડ
-                </h3>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">
-                Download AI capsules for offline learning
-              </p>
-              <Button
-                variant="outline"
-                className="w-full font-gujarati"
-                onClick={() => console.log("Open offline manager")}
-              >
-                કેપ્સ્યુલ્સ જુઓ
-              </Button>
-            </Card>
-
-            <Card className="p-4 md:p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <Volume2 className="w-6 h-6 text-blue-600" />
-                <h3 className="font-semibold text-gray-900 font-gujarati">
-                  અવાજ ટ્યુટર
-                </h3>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">
-                Accent-friendly Gujarati voice lessons
-              </p>
-              <Button
-                variant="outline"
-                className="w-full font-gujarati"
-                onClick={() =>
-                  updateSettings({ voiceEnabled: !settings.voiceEnabled })
-                }
-              >
-                {settings.voiceEnabled ? "સક્રિય" : "સક્રિય કરો"}
-              </Button>
-            </Card>
-
-            <Card className="p-4 md:p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <Users className="w-6 h-6 text-purple-600" />
-                <h3 className="font-semibold text-gray-900 font-gujarati">
-                  સુરક્ષિત પીઅર લર્નિંગ
-                </h3>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">
-                Anonymous doubt sharing with AI moderation
-              </p>
-              <Button variant="outline" className="w-full font-gujarati">
-                શંકા શેર કરો
-              </Button>
-            </Card>
-          </div>
-        </div>
-
-        {/* Explainable AI Example */}
-        <ExplainableAICard
-          explanation={{
-            source: "GSEB Class 10 Math Textbook, Chapter 3",
-            confidence: 95,
-            reasoning:
-              "Answer verified against official syllabus and cross-checked with multiple authoritative sources",
-          }}
-        />
 
         {/* Achievement Banner */}
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="text-center py-6 md:py-8"
+          className="text-center py-6"
         >
-          <div className="inline-flex items-center gap-2 px-4 md:px-6 py-3 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg">
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg">
             <Trophy className="w-5 h-5" />
-            <span className="font-semibold font-gujarati text-sm md:text-base">
-              🎉 તમે આજે {gamification.dailyXP} XP મેળવ્યા! સરસ કામ!
+            <span className="font-semibold font-gujarati">
+              🎉 તમારી શીખવાની યાત્રા અહીંથી શરૂ થાય છે!
             </span>
           </div>
         </motion.div>

@@ -7,17 +7,42 @@ import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
+  Home,
   MessageSquare,
   BookOpen,
-  History,
   Target,
+  Trophy,
+  Calendar,
+  Brain,
+  Users,
+  WifiOff,
+  TrendingUp,
+  Shield,
   Settings,
   LogOut,
   Menu,
   X,
   GraduationCap,
-  Home,
+  ChevronDown,
+  ChevronRight,
+  Zap,
+  Award,
+  RefreshCw,
+  Sparkles,
+  Map,
+  CheckCircle2,
+  AlertCircle,
+  Download,
+  Volume2,
+  HelpCircle,
+  UserCheck,
+  BookMarked,
+  PenTool,
+  BarChart3,
+  Lock,
+  Eye,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getGreeting } from "@/lib/utils";
@@ -27,44 +52,316 @@ interface NavItem {
   icon: React.ReactNode;
   label: string;
   labelGu: string;
+  badge?: string;
+  isNew?: boolean;
 }
 
-const navItems: NavItem[] = [
+interface NavGroup {
+  id: string;
+  label: string;
+  labelGu: string;
+  icon: React.ReactNode;
+  items: NavItem[];
+}
+
+const navigationGroups: NavGroup[] = [
   {
-    href: "/dashboard/student",
+    id: "dashboard",
+    label: "Dashboard",
+    labelGu: "ડેશબોર્ડ",
     icon: <Home className="w-5 h-5" />,
-    label: "Home",
-    labelGu: "હોમ",
+    items: [
+      {
+        href: "/dashboard/student",
+        icon: <Home className="w-4 h-4" />,
+        label: "Overview",
+        labelGu: "ઝાંખી",
+      },
+    ],
   },
   {
-    href: "/dashboard/student/ask-ai",
+    id: "ai-tutor",
+    label: "AI Tutor",
+    labelGu: "AI શિક્ષક",
     icon: <MessageSquare className="w-5 h-5" />,
-    label: "Ask AI",
-    labelGu: "AI ને પૂછો",
+    items: [
+      {
+        href: "/dashboard/student/ask-ai",
+        icon: <MessageSquare className="w-4 h-4" />,
+        label: "Ask AI (Text)",
+        labelGu: "AI ને પૂછો (લખાણ)",
+      },
+      {
+        href: "/dashboard/student/voice-tutor",
+        icon: <Volume2 className="w-4 h-4" />,
+        label: "Voice Tutor",
+        labelGu: "અવાજ શિક્ષક",
+        isNew: true,
+      },
+      {
+        href: "/dashboard/student/explanation-styles",
+        icon: <Sparkles className="w-4 h-4" />,
+        label: "Explanation Styles",
+        labelGu: "સમજૂતી શૈલી",
+      },
+    ],
   },
   {
-    href: "/dashboard/student/learn",
-    icon: <BookOpen className="w-5 h-5" />,
-    label: "Learn",
-    labelGu: "શીખો",
+    id: "learning-path",
+    label: "Learning Path",
+    labelGu: "શિક્ષણ માર્ગ",
+    icon: <Map className="w-5 h-5" />,
+    items: [
+      {
+        href: "/dashboard/student/learn",
+        icon: <BookOpen className="w-4 h-4" />,
+        label: "Subject Learning",
+        labelGu: "વિષય શીખો",
+      },
+      {
+        href: "/dashboard/student/curriculum",
+        icon: <BookMarked className="w-4 h-4" />,
+        label: "Syllabus Tree",
+        labelGu: "અભ્યાસક્રમ વૃક્ષ",
+      },
+      {
+        href: "/dashboard/student/next-topic",
+        icon: <Sparkles className="w-4 h-4" />,
+        label: "Next Best Topic",
+        labelGu: "આગળનું વિષય",
+        badge: "AI",
+      },
+      {
+        href: "/dashboard/student/class-selection",
+        icon: <GraduationCap className="w-4 h-4" />,
+        label: "Class Selection",
+        labelGu: "ધોરણ પસંદગી",
+      },
+    ],
   },
   {
-    href: "/dashboard/student/notes",
-    icon: <History className="w-5 h-5" />,
-    label: "Notes",
-    labelGu: "નોંધો",
-  },
-  {
-    href: "/dashboard/student/practice",
+    id: "practice",
+    label: "Practice Zone",
+    labelGu: "અભ્યાસ ઝોન",
     icon: <Target className="w-5 h-5" />,
-    label: "Practice",
-    labelGu: "અભ્યાસ",
+    items: [
+      {
+        href: "/dashboard/student/practice",
+        icon: <Target className="w-4 h-4" />,
+        label: "Practice Questions",
+        labelGu: "પ્રશ્નો",
+      },
+      {
+        href: "/dashboard/student/exam-style",
+        icon: <PenTool className="w-4 h-4" />,
+        label: "Exam-Style Questions",
+        labelGu: "પરીક્ષા શૈલી",
+        badge: "AI",
+      },
+      {
+        href: "/dashboard/student/instant-explain",
+        icon: <HelpCircle className="w-4 h-4" />,
+        label: "Instant Explanation",
+        labelGu: "તુરંત સમજૂતી",
+      },
+    ],
   },
   {
-    href: "/dashboard/student/settings",
-    icon: <Settings className="w-5 h-5" />,
-    label: "Settings",
-    labelGu: "સેટિંગ્સ",
+    id: "gamification",
+    label: "Gamification",
+    labelGu: "ગેમિફિકેશન",
+    icon: <Trophy className="w-5 h-5" />,
+    items: [
+      {
+        href: "/dashboard/student/streaks",
+        icon: <Zap className="w-4 h-4" />,
+        label: "Daily Streaks",
+        labelGu: "દૈનિક સ્ટ્રીક્સ",
+      },
+      {
+        href: "/dashboard/student/xp-levels",
+        icon: <Award className="w-4 h-4" />,
+        label: "XP & Levels",
+        labelGu: "XP અને સ્તરો",
+      },
+      {
+        href: "/dashboard/student/badges",
+        icon: <Trophy className="w-4 h-4" />,
+        label: "Badges & Rewards",
+        labelGu: "બેજ અને પુરસ્કારો",
+      },
+      {
+        href: "/dashboard/student/micro-challenges",
+        icon: <Sparkles className="w-4 h-4" />,
+        label: "Micro Challenges",
+        labelGu: "માઇક્રો ચેલેન્જ",
+        badge: "3min",
+      },
+    ],
+  },
+  {
+    id: "revision",
+    label: "Revision & Planner",
+    labelGu: "પુનરાવર્તન અને આયોજક",
+    icon: <Calendar className="w-5 h-5" />,
+    items: [
+      {
+        href: "/dashboard/student/smart-revision",
+        icon: <RefreshCw className="w-4 h-4" />,
+        label: "Smart Revision",
+        labelGu: "સ્માર્ટ રિવિઝન",
+        badge: "AI",
+      },
+      {
+        href: "/dashboard/student/study-planner",
+        icon: <Calendar className="w-4 h-4" />,
+        label: "Study Planner",
+        labelGu: "અભ્યાસ યોજનાકાર",
+      },
+      {
+        href: "/dashboard/student/self-explanation",
+        icon: <PenTool className="w-4 h-4" />,
+        label: "Self Explanation",
+        labelGu: "સ્વ-સમજૂતી",
+      },
+    ],
+  },
+  {
+    id: "ai-coach",
+    label: "AI Coach",
+    labelGu: "AI કોચ",
+    icon: <Brain className="w-5 h-5" />,
+    items: [
+      {
+        href: "/dashboard/student/learning-dna",
+        icon: <Brain className="w-4 h-4" />,
+        label: "Learning DNA",
+        labelGu: "લર્નિંગ DNA",
+      },
+      {
+        href: "/dashboard/student/concept-gaps",
+        icon: <AlertCircle className="w-4 h-4" />,
+        label: "Concept Gaps",
+        labelGu: "કોન્સેપ્ટ ગેપ",
+        badge: "AI",
+      },
+      {
+        href: "/dashboard/student/confusion-detector",
+        icon: <HelpCircle className="w-4 h-4" />,
+        label: "Confusion Detector",
+        labelGu: "મૂંઝવણ શોધક",
+      },
+      {
+        href: "/dashboard/student/ai-messages",
+        icon: <Sparkles className="w-4 h-4" />,
+        label: "AI Messages",
+        labelGu: "AI સંદેશાઓ",
+      },
+    ],
+  },
+  {
+    id: "peer-learning",
+    label: "Peer Learning",
+    labelGu: "સાથીદાર શીખવું",
+    icon: <Users className="w-5 h-5" />,
+    items: [
+      {
+        href: "/dashboard/student/doubt-sharing",
+        icon: <Users className="w-4 h-4" />,
+        label: "Safe Doubt Sharing",
+        labelGu: "સુરક્ષિત શંકા શેરિંગ",
+      },
+      {
+        href: "/dashboard/student/anonymous-mode",
+        icon: <UserCheck className="w-4 h-4" />,
+        label: "Anonymous Learning",
+        labelGu: "અનામી શીખવું",
+      },
+    ],
+  },
+  {
+    id: "offline-rural",
+    label: "Offline & Rural",
+    labelGu: "ઓફલાઇન અને ગ્રામીણ",
+    icon: <WifiOff className="w-5 h-5" />,
+    items: [
+      {
+        href: "/dashboard/student/offline-capsules",
+        icon: <Download className="w-4 h-4" />,
+        label: "Offline Capsules",
+        labelGu: "ઓફલાઇન કેપ્સ્યુલ",
+      },
+      {
+        href: "/dashboard/student/audio-lessons",
+        icon: <Volume2 className="w-4 h-4" />,
+        label: "Audio Lessons",
+        labelGu: "ઓડિયો પાઠ",
+      },
+      {
+        href: "/dashboard/student/low-bandwidth",
+        icon: <WifiOff className="w-4 h-4" />,
+        label: "Low Bandwidth Mode",
+        labelGu: "લો બેન્ડવિડ્થ મોડ",
+      },
+    ],
+  },
+  {
+    id: "progress",
+    label: "Progress & Readiness",
+    labelGu: "પ્રગતિ અને તૈયારી",
+    icon: <TrendingUp className="w-5 h-5" />,
+    items: [
+      {
+        href: "/dashboard/student/exam-readiness",
+        icon: <CheckCircle2 className="w-4 h-4" />,
+        label: "Exam Readiness",
+        labelGu: "પરીક્ષા તૈયારી",
+      },
+      {
+        href: "/dashboard/student/weak-areas",
+        icon: <AlertCircle className="w-4 h-4" />,
+        label: "Weak Areas",
+        labelGu: "નબળા ક્ષેત્રો",
+      },
+      {
+        href: "/dashboard/student/performance",
+        icon: <BarChart3 className="w-4 h-4" />,
+        label: "Performance Analytics",
+        labelGu: "પ્રદર્શન વિશ્લેષણ",
+      },
+      {
+        href: "/dashboard/student/notes",
+        icon: <BookMarked className="w-4 h-4" />,
+        label: "Notes & History",
+        labelGu: "નોંધો અને ઇતિહાસ",
+      },
+    ],
+  },
+  {
+    id: "safety",
+    label: "Safety & Privacy",
+    labelGu: "સુરક્ષા અને ગોપનીયતા",
+    icon: <Shield className="w-5 h-5" />,
+    items: [
+      {
+        href: "/dashboard/student/safe-mode",
+        icon: <Shield className="w-4 h-4" />,
+        label: "Safe Learning Mode",
+        labelGu: "સુરક્ષિત શીખવું",
+      },
+      {
+        href: "/dashboard/student/explainable-ai",
+        icon: <Eye className="w-4 h-4" />,
+        label: "Explainable AI",
+        labelGu: "સમજાવી શકાય તેવું AI",
+      },
+      {
+        href: "/dashboard/student/privacy",
+        icon: <Lock className="w-4 h-4" />,
+        label: "Privacy Settings",
+        labelGu: "ગોપનીયતા સેટિંગ્સ",
+      },
+    ],
   },
 ];
 
@@ -78,6 +375,10 @@ export default function StudentDashboardLayout({
   const { user, isAuthenticated, logout } = useAuthStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([
+    "dashboard",
+    "ai-tutor",
+  ]);
 
   useEffect(() => {
     setMounted(true);
@@ -85,6 +386,14 @@ export default function StudentDashboardLayout({
       router.push("/login");
     }
   }, [isAuthenticated, user, router]);
+
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups((prev) =>
+      prev.includes(groupId)
+        ? prev.filter((id) => id !== groupId)
+        : [...prev, groupId]
+    );
+  };
 
   const handleLogout = () => {
     logout();
@@ -182,35 +491,119 @@ export default function StudentDashboardLayout({
                 </div>
               </div>
 
-              {/* Navigation */}
-              <nav className="flex-1 p-4 overflow-y-auto">
-                <ul className="space-y-1">
-                  {navItems.map((item) => {
-                    const isActive = pathname === item.href;
+              {/* Navigation with Collapsible Groups */}
+              <ScrollArea className="flex-1 px-4">
+                <nav className="space-y-2 py-4">
+                  {navigationGroups.map((group) => {
+                    const isExpanded = expandedGroups.includes(group.id);
                     return (
-                      <li key={item.href}>
+                      <div key={group.id} className="space-y-1">
+                        {/* Group Header */}
                         <button
-                          onClick={() => {
-                            router.push(item.href);
-                            setIsSidebarOpen(false);
-                          }}
+                          onClick={() => toggleGroup(group.id)}
                           className={cn(
-                            "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-left",
-                            isActive
-                              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md"
-                              : "text-gray-700 hover:bg-gray-100"
+                            "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-left group",
+                            "hover:bg-gray-100 text-gray-700"
                           )}
                         >
-                          {item.icon}
-                          <span className="font-medium font-gujarati">
-                            {item.labelGu}
+                          {group.icon}
+                          <span className="flex-1 font-medium font-gujarati text-sm">
+                            {group.labelGu}
                           </span>
+                          {isExpanded ? (
+                            <ChevronDown className="w-4 h-4 text-gray-400" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4 text-gray-400" />
+                          )}
                         </button>
-                      </li>
+
+                        {/* Group Items */}
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden"
+                            >
+                              <ul className="space-y-1 ml-4 mt-1">
+                                {group.items.map((item) => {
+                                  const isActive = pathname === item.href;
+                                  return (
+                                    <li key={item.href}>
+                                      <button
+                                        onClick={() => {
+                                          router.push(item.href);
+                                          setIsSidebarOpen(false);
+                                        }}
+                                        className={cn(
+                                          "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-left relative",
+                                          isActive
+                                            ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-sm"
+                                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                                        )}
+                                      >
+                                        {item.icon}
+                                        <span className="flex-1 text-sm font-gujarati">
+                                          {item.labelGu}
+                                        </span>
+                                        {item.badge && (
+                                          <span
+                                            className={cn(
+                                              "text-xs px-1.5 py-0.5 rounded font-medium",
+                                              isActive
+                                                ? "bg-white/20 text-white"
+                                                : "bg-blue-100 text-blue-700"
+                                            )}
+                                          >
+                                            {item.badge}
+                                          </span>
+                                        )}
+                                        {item.isNew && (
+                                          <span
+                                            className={cn(
+                                              "text-xs px-1.5 py-0.5 rounded font-medium",
+                                              isActive
+                                                ? "bg-white/20 text-white"
+                                                : "bg-green-100 text-green-700"
+                                            )}
+                                          >
+                                            NEW
+                                          </span>
+                                        )}
+                                      </button>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
                     );
                   })}
-                </ul>
-              </nav>
+                </nav>
+
+                {/* Settings at Bottom of Scroll */}
+                <div className="py-4 border-t border-gray-200">
+                  <button
+                    onClick={() => {
+                      router.push("/dashboard/student/settings");
+                      setIsSidebarOpen(false);
+                    }}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-left",
+                      pathname === "/dashboard/student/settings"
+                        ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-sm"
+                        : "text-gray-700 hover:bg-gray-100"
+                    )}
+                  >
+                    <Settings className="w-5 h-5" />
+                    <span className="font-medium font-gujarati">સેટિંગ્સ</span>
+                  </button>
+                </div>
+              </ScrollArea>
 
               {/* Logout Button */}
               <div className="p-4 border-t border-gray-200">
