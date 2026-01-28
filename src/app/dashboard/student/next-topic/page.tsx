@@ -4,7 +4,16 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, Brain, Target, Zap, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  Sparkles,
+  ArrowRight,
+  Brain,
+  Target,
+  Zap,
+  TrendingUp,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDashboardStore } from "@/store/dashboard-store";
 
@@ -145,7 +154,9 @@ export default function NextTopicPage() {
                   <p className="text-xl opacity-90 mb-4">
                     {recommendation.topic}
                   </p>
-                  <p className="text-sm opacity-80">{recommendation.chapterGu}</p>
+                  <p className="text-sm opacity-80">
+                    {recommendation.chapterGu}
+                  </p>
                   <p className="text-sm opacity-75">{recommendation.chapter}</p>
                 </div>
 
@@ -202,8 +213,8 @@ export default function NextTopicPage() {
         {/* Why This Topic? */}
         <Card className="p-6">
           <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <Brain className="w-5 h-5 text-purple-600" />
-            આ વિષય શા માટે? / Why This Topic?
+            <Brain className="w-5 h-5 text-purple-600" />આ વિષય શા માટે? / Why
+            This Topic?
           </h3>
           <div className="space-y-3">
             {recommendation.reasons.map((reason, index) => (
@@ -225,9 +236,13 @@ export default function NextTopicPage() {
                       : "bg-blue-100 text-blue-600"
                   )}
                 >
-                  <span className="font-bold text-sm">{Math.floor(index / 2) + 1}</span>
+                  <span className="font-bold text-sm">
+                    {Math.floor(index / 2) + 1}
+                  </span>
                 </div>
-                <p className="text-sm text-gray-700 leading-relaxed">{reason}</p>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  {reason}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -274,7 +289,9 @@ export default function NextTopicPage() {
                     <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded">
                       {alt.confidence}% Match
                     </span>
-                    <h4 className="font-semibold text-gray-900">{alt.topicGu}</h4>
+                    <h4 className="font-semibold text-gray-900">
+                      {alt.topicGu}
+                    </h4>
                   </div>
                   <p className="text-sm text-gray-600 mb-1">{alt.topic}</p>
                   <p className="text-xs text-gray-500">

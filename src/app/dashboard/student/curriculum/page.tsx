@@ -186,7 +186,9 @@ export default function CurriculumPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="p-4">
             <p className="text-sm text-gray-600 mb-1">Total Chapters</p>
-            <p className="text-2xl font-bold text-gray-900">{chapters.length}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {chapters.length}
+            </p>
           </Card>
           <Card className="p-4">
             <p className="text-sm text-gray-600 mb-1">Total Topics</p>
@@ -198,8 +200,7 @@ export default function CurriculumPage() {
             <p className="text-sm text-gray-600 mb-1">Completed</p>
             <p className="text-2xl font-bold text-green-600">
               {chapters.reduce(
-                (sum, ch) =>
-                  sum + ch.topics.filter((t) => t.completed).length,
+                (sum, ch) => sum + ch.topics.filter((t) => t.completed).length,
                 0
               )}
             </p>
@@ -415,7 +416,9 @@ export default function CurriculumPage() {
             </div>
             <div className="flex items-center gap-2">
               <Lock className="w-5 h-5 text-gray-400" />
-              <span className="text-gray-700">Locked (Complete previous topics)</span>
+              <span className="text-gray-700">
+                Locked (Complete previous topics)
+              </span>
             </div>
           </div>
         </Card>

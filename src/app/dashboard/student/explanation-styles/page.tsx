@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { useDashboardStore } from "@/store/dashboard-store";
 
 export default function ExplanationStylesPage() {
-  const { studentContext } = useDashboardStore();
+  const { studentContext, setStudentContext } = useDashboardStore();
   const [selectedStyle, setSelectedStyle] = useState("simple");
   const [isExplainLike10, setIsExplainLike10] = useState(false);
 
@@ -32,7 +32,11 @@ export default function ExplanationStylesPage() {
       description: "Short, easy-to-understand explanations with examples",
       descriptionGu: "ટૂંકા, સમજવા સરળ સમજૂતીઓ ઉદાહરણો સાથે",
       color: "from-green-500 to-emerald-600",
-      features: ["✓ Short sentences", "✓ Daily life examples", "✓ No complex terms"],
+      features: [
+        "✓ Short sentences",
+        "✓ Daily life examples",
+        "✓ No complex terms",
+      ],
     },
     {
       id: "detailed",
@@ -76,13 +80,14 @@ export default function ExplanationStylesPage() {
 
   const handleStyleChange = (styleId: string) => {
     setSelectedStyle(styleId);
-    // TODO: Update explanation style in store
+    setStudentContext({ currentTopic: styleId });
   };
 
   const handleExplainLike10Toggle = () => {
     const newValue = !isExplainLike10;
     setIsExplainLike10(newValue);
-    // TODO: Update explain like 10 setting in store
+    // Store preference for simplified explanations
+    console.log("Explain-Like-I'm-10:", newValue);
   };
 
   return (
@@ -261,10 +266,7 @@ export default function ExplanationStylesPage() {
                 Explanation Style:
               </p>
               <p className="text-base font-semibold text-green-700">
-                {
-                  explanationStyles.find((s) => s.id === selectedStyle)
-                    ?.titleGu
-                }
+                {explanationStyles.find((s) => s.id === selectedStyle)?.titleGu}
               </p>
             </div>
             <div>

@@ -4,18 +4,29 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Check, ArrowRight, BookOpen, Target } from "lucide-react";
+import {
+  GraduationCap,
+  Check,
+  ArrowRight,
+  BookOpen,
+  Target,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDashboardStore } from "@/store/dashboard-store";
 import type { ClassLevel } from "@/types";
 
 export default function ClassSelectionPage() {
-  const { studentContext } = useDashboardStore();
+  const { studentContext, setStudentContext } = useDashboardStore();
   const [selectedClass, setSelectedClass] = useState(
     studentContext.classLevel || 10
   );
 
-  const classes: { value: ClassLevel; label: string; labelEn: string; subjects: number }[] = [
+  const classes: {
+    value: ClassLevel;
+    label: string;
+    labelEn: string;
+    subjects: number;
+  }[] = [
     { value: 5, label: "ધોરણ 5", labelEn: "Class 5", subjects: 6 },
     { value: 6, label: "ધોરણ 6", labelEn: "Class 6", subjects: 7 },
     { value: 7, label: "ધોરણ 7", labelEn: "Class 7", subjects: 7 },
@@ -31,8 +42,7 @@ export default function ClassSelectionPage() {
   };
 
   const handleConfirm = () => {
-    // TODO: Update class level in store
-    // setStudentContext({ classLevel: selectedClass });
+    setStudentContext({ classLevel: selectedClass });
   };
 
   return (
@@ -83,7 +93,7 @@ export default function ClassSelectionPage() {
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
           {classes.map((classItem, index) => {
             const isSelected = selectedClass === classItem.value;
-const isCurrent = studentContext.classLevel === classItem.value;
+            const isCurrent = studentContext.classLevel === classItem.value;
 
             return (
               <motion.div
@@ -196,21 +206,22 @@ const isCurrent = studentContext.classLevel === classItem.value;
               <li className="flex items-start gap-2">
                 <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                 <span>
-                  Curriculum and syllabus content will match your class / અભ્યાસક્રમ
-                  અને સિલેબસ સામગ્રી તમારા ધોરણ સાથે મેળ ખાશે
+                  Curriculum and syllabus content will match your class /
+                  અભ્યાસક્રમ અને સિલેબસ સામગ્રી તમારા ધોરણ સાથે મેળ ખાશે
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                 <span>
-                  Question difficulty will be adjusted / પ્રશ્નની મુશ્કેલી ગોઠવવામાં
-                  આવશે
+                  Question difficulty will be adjusted / પ્રશ્નની મુશ્કેલી
+                  ગોઠવવામાં આવશે
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                 <span>
-                  AI recommendations will be personalized / AI ભલામણો વ્યક્તિગત થશે
+                  AI recommendations will be personalized / AI ભલામણો વ્યક્તિગત
+                  થશે
                 </span>
               </li>
             </ul>
